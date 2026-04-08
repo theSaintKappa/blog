@@ -63,7 +63,7 @@
             @empty
                 <div class="col-span-full text-center py-12">
                     <p class="text-gray-500 text-lg">Brak postów do wyświetlenia.</p>
-                    <a href="/posts/create" class="text-indigo-600 hover:text-indigo-700 font-medium mt-2 inline-block">
+                    <a href="{{ route('posts.create') }}" class="text-indigo-600 hover:text-indigo-700 font-medium mt-2 inline-block">
                         Dodaj pierwszy post
                     </a>
                 </div>
