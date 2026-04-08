@@ -33,6 +33,9 @@ This project has domain-specific skills available. You MUST activate the relevan
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
+- After implementing new functionality, you must also create appropriate Pest tests (feature tests). The tests should cover happy path and edge cases."
+- Filament resources (resources, pages, widgets) MUST be created using `php artisan make:filament-*` commands with the `--no-interaction` flag and appropriate options. Never generate Filament files manually — use the CLI, then modify the generated files.
+- Before implementing new functionality, use the `search-docs` tool to check the current documentation for the versions of packages installed in the project.
 
 ## Verification Scripts
 
