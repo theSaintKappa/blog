@@ -2,11 +2,27 @@
 
 use App\Http\Controllers\HelloController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return redirect()->route('posts.index');
+});
 
 Route::get('/hello-world/{name}', [HelloController::class, 'index']);
 
-Route::get('/', [PostController::class, 'index'])->name('posts.index');
-Route::post('/', [PostController::class, 'store'])->name('posts.store');
-Route::get('/create', [PostController::class, 'create'])->name('posts.create');
-Route::get('/{slug}', [PostController::class, 'show'])->name('posts.show');
+// Posts
+Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';

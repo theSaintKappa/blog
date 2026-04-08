@@ -9,7 +9,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::where('is_published', true)->get();
 
         return view('posts.index', [
             'posts' => $posts,
@@ -18,7 +18,7 @@ class PostController extends Controller
 
     public function show(string $slug)
     {
-        $post = Post::where('slug', $slug)->firstOrFail();
+        $post = Post::where('slug', $slug)->where('is_published', true)->firstOrFail();
 
         return view('posts.show', [
             'post' => $post,
