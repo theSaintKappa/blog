@@ -9,7 +9,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::where('is_published', true)->get();
+        $posts = Post::where('is_published', true)->latest()->paginate(12);
 
         return view('posts.index', [
             'posts' => $posts,

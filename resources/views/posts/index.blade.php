@@ -52,9 +52,9 @@
                             <div class="flex items-center gap-2">
                                 <div
                                     class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm font-semibold">
-                                    {{ strtoupper(substr($post->author, 0, 2)) }}
+                                    {{ strtoupper(substr($post->user?->name ?? 'Anon', 0, 2)) }}
                                 </div>
-                                <span class="text-sm text-gray-700 font-medium">{{ $post->author }}</span>
+                                <span class="text-sm text-gray-700 font-medium">{{ $post->user?->name ?? 'Anonymous' }}</span>
                             </div>
                             <span class="text-sm text-gray-500">{{ $post->created_at->diffForHumans() }}</span>
                         </div>
@@ -66,6 +66,10 @@
                 </div>
             @endforelse
 
+        </div>
+
+        <div class="mt-8">
+            {{ $posts->links() }}
         </div>
     </main>
 
