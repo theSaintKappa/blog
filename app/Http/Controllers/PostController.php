@@ -7,13 +7,9 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::where('is_published', true)->latest()->paginate(12);
-
-        return view('posts.index', [
-            'posts' => $posts,
-        ]);
+        return view('posts.index');
     }
 
     public function show(string $slug)
