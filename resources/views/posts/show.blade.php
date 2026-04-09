@@ -203,62 +203,30 @@
             </div>
         </section>
         <!-- Related Posts -->
-        <section class="mt-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Powiązane artykuły</h2>
-            <div class="grid gap-6 md:grid-cols-3">
-
-                <!-- Related Post 1 -->
-                <a href="#" class="group">
-                    <article
-                        class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                        <div
-                            class="h-32 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                            <span class="text-5xl">🤖</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2 mb-2">
-                                GitHub Copilot Agent Mode w praktyce
-                            </h3>
-                            <p class="text-sm text-gray-500">8 min czytania</p>
-                        </div>
-                    </article>
-                </a>
-
-                <!-- Related Post 2 -->
-                <a href="#" class="group">
-                    <article
-                        class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                        <div class="h-32 bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
-                            <span class="text-5xl">⚛️</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2 mb-2">
-                                Inertia.js - most między Laravel a React
-                            </h3>
-                            <p class="text-sm text-gray-500">12 min czytania</p>
-                        </div>
-                    </article>
-                </a>
-
-                <!-- Related Post 3 -->
-                <a href="#" class="group">
-                    <article
-                        class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                        <div
-                            class="h-32 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                            <span class="text-5xl">🎨</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2 mb-2">
-                                Laravel Filament - admin panel w 15 minut
-                            </h3>
-                            <p class="text-sm text-gray-500">6 min czytania</p>
-                        </div>
-                    </article>
-                </a>
-
-            </div>
-        </section>
+        @if($relatedPosts->isNotEmpty())
+            <section class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Powiązane artykuły</h2>
+                <div class="grid gap-6 md:grid-cols-3">
+                    @foreach($relatedPosts as $relatedPost)
+                        <a href="{{ route('posts.show', $relatedPost->slug) }}" class="group">
+                            <article
+                                class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                                <div
+                                    class="h-32 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                                    <span class="text-5xl">{{ $relatedPost->photo ?? '📝' }}</span>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2 mb-2">
+                                        {{ $relatedPost->title }}
+                                    </h3>
+                                    <p class="text-sm text-gray-500">{{ max(1, ceil(str_word_count(strip_tags($relatedPost->content)) / 200)) }} min czytania</p>
+                                </div>
+                            </article>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
 
     </main>
 

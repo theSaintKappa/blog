@@ -21,8 +21,22 @@ class PostController extends Controller
             }])
             ->firstOrFail();
 
+        $relatedPosts = Post::where('is_published', true)
+            ->where('id', '!=', $post->id)
+            ->whereHas('tags', function ($query) use ($post) {
+                $query->whereIn('tags.id', $post->tags->pluck('id'));
+            })
+            ->withCount(['tags' => function ($query) use ($post) {
+                $query->whereIn('tags.id', $post->tags->pluck('id'));
+            }])
+            ->orderByDesc('tags_count')
+            ->latest()
+            ->limit(3)
+            ->get();
+
         return view('posts.show', [
             'post' => $post,
+            'relatedPosts' => $relatedPosts,
         ]);
     }
 
