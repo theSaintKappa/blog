@@ -189,8 +189,14 @@ new class extends Component
 
         @forelse ($posts as $post)
             <article class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden" wire:key="post-{{ $post->id }}">
-                <div class="h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                    <span class="text-6xl">{{ $post->photo ?? '📝' }}</span>
+                <div class="h-48 flex items-center justify-center overflow-hidden">
+                    @if($post->photo)
+                        <img src="{{ $post->photo }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <span class="text-6xl">📝</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="p-6">
                     <div class="flex items-center gap-2 mb-3">

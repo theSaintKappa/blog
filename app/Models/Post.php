@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Http;
 
 class Post extends Model
 {
@@ -22,6 +23,17 @@ class Post extends Model
         'photo',
         'is_published',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Post $post) {
+            if (empty($post->photo)) {
+                $post->photo = Http::withoutRedirecting()
+                    ->get('https://picsum.photos/1920/1080')
+                    ->header('Location') ?: 'https://picsum.photos/1920/1080';
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {

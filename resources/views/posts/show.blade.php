@@ -5,8 +5,14 @@
         <!-- Post Header -->
         <article class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
             <!-- Featured Image -->
-            <div class="h-96 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span class="text-9xl">{{ $post->photo ?? '📝' }}</span>
+            <div class="h-96 bg-gradient-to-br flex items-center justify-center overflow-hidden">
+                @if($post->photo)
+                    <img src="{{ $post->photo }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                @else
+                    <div class="w-full h-full from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <span class="text-9xl">📝</span>
+                    </div>
+                @endif
             </div>
 
             <!-- Post Content -->
@@ -238,9 +244,14 @@
                         <a href="{{ route('posts.show', $relatedPost->slug) }}" class="group">
                             <article
                                 class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                                <div
-                                    class="h-32 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                                    <span class="text-5xl">{{ $relatedPost->photo ?? '📝' }}</span>
+                                <div class="h-32 flex items-center justify-center overflow-hidden">
+                                    @if($relatedPost->photo)
+                                        <img src="{{ $relatedPost->photo }}" alt="{{ $relatedPost->title }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                                            <span class="text-5xl">📝</span>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="p-4">
                                     <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2 mb-2">

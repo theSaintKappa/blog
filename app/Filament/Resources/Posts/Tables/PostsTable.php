@@ -24,8 +24,7 @@ class PostsTable
                 }
             })
             ->columns([
-                ImageColumn::make('photo')
-                    ->disk('public'),
+                ImageColumn::make('photo'),
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('slug')

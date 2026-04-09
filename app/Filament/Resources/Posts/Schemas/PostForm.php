@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -60,10 +59,9 @@ class PostForm
                     ->default(fn () => Auth::id()),
                 Toggle::make('is_published')
                     ->required(),
-                FileUpload::make('photo')
-                    ->image()
-                    ->disk('public')
-                    ->directory('posts'),
+                TextInput::make('photo')
+                    ->url()
+                    ->nullable(),
             ]);
     }
 }
