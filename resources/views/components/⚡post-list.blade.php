@@ -29,7 +29,9 @@ new class extends Component
     public function with(): array
     {
         $posts = Post::query()
-            ->where('is_published', true)
+            ->when(auth()->user()?->role !== \App\Enums\Role::Admin, function ($query) {
+                $query->where('is_published', true);
+            })
             ->when($this->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")

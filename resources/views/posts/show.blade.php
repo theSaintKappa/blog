@@ -23,16 +23,43 @@
                             <p class="text-sm text-gray-500">Opublikowano: {{ $post->created_at->format('d F Y') }}</p>
                         </div>
                     </div>
-                    <div class="ml-auto flex gap-2">
-                        @if ($post->is_published)
-                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-                                Opublikowany
-                            </span>
-                        @else
-                            <span class="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
-                                Szkic
-                            </span>
-                        @endif
+                    <div class="ml-auto flex flex-col items-end gap-2">
+                        <div class="flex gap-2">
+                            @if ($post->is_published)
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                    Opublikowany
+                                </span>
+                            @else
+                                <span class="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
+                                    Szkic
+                                </span>
+                            @endif
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            @can('update', $post)
+                                @if (!$post->is_published)
+                                <form action="{{ route('posts.publish', $post) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full hover:bg-green-700 transition">
+                                        Publikuj
+                                    </button>
+                                </form>
+                                @endif
+                                <a href="{{ App\Filament\Resources\Posts\PostResource::getUrl('edit', ['record' => $post]) }}" class="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full hover:bg-blue-700 transition">
+                                    Edytuj
+                                </a>
+                            @endcan
+                            @can('delete', $post)
+                                <form action="{{ route('posts.destroy', $post) }}" method="POST" class="inline" onsubmit="return confirm('Czy na pewno chcesz usunąć ten post?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="px-3 py-1 bg-red-600 text-white text-xs font-semibold rounded-full hover:bg-red-700 transition">
+                                        Usuń
+                                    </button>
+                                </form>
+                            @endcan
+                        </div>
                     </div>
                 </div>
 

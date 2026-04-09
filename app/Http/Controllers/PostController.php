@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -15,14 +16,18 @@ class PostController extends Controller
     public function show(string $slug)
     {
         $post = Post::where('slug', $slug)
-            ->where('is_published', true)
+            ->when(auth()->user()?->role !== Role::Admin, function ($query) {
+                $query->where('is_published', true);
+            })
             ->with(['tags', 'comments' => function ($query) {
                 $query->whereNull('parent_id')->with(['user', 'replies.user'])->latest();
             }])
             ->firstOrFail();
 
-        $relatedPosts = Post::where('is_published', true)
-            ->where('id', '!=', $post->id)
+        $relatedPosts = Post::where('id', '!=', $post->id)
+            ->when(auth()->user()?->role !== Role::Admin, function ($query) {
+                $query->where('is_published', true);
+            })
             ->whereHas('tags', function ($query) use ($post) {
                 $query->whereIn('tags.id', $post->tags->pluck('id'));
             })
@@ -66,6 +71,28 @@ class PostController extends Controller
         // Post::create($parameters);
 
         $post->save();
+
+        return redirect()->route('posts.index');
+    }
+
+    public function publish(Request $request, Post $post)
+    {
+        if ($request->user()->cannot('update', $post)) {
+            abort(403);
+        }
+
+        $post->update(['is_published' => true]);
+
+        return back();
+    }
+
+    public function destroy(Request $request, Post $post)
+    {
+        if ($request->user()->cannot('delete', $post)) {
+            abort(403);
+        }
+
+        $post->delete();
 
         return redirect()->route('posts.index');
     }

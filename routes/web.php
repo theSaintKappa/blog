@@ -18,6 +18,8 @@ Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show')
 
 Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
+    Route::post('/posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 Route::get('/dashboard', function () {
