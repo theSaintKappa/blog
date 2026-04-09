@@ -59,7 +59,14 @@ class DatabaseSeeder extends Seeder
             Tag::firstOrCreate(['slug' => $slug], ['name' => $name]);
         }
 
-        Post::factory(25)->create()->each(function ($post) use ($users) {
+        Post::factory(25)->state(function () {
+            $createdAt = fake()->dateTimeBetween('-1 year', 'now');
+
+            return [
+                'created_at' => $createdAt,
+                'updated_at' => fake()->dateTimeBetween($createdAt, 'now'),
+            ];
+        })->create()->each(function ($post) use ($users) {
             $post->tags()->attach(
                 Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')
             );
