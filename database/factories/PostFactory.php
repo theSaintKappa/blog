@@ -26,7 +26,13 @@ class PostFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title),
             'lead' => $this->faker->paragraph(),
-            'content' => collect($this->faker->paragraphs(4))->map(fn ($p) => "<p>{$p}</p>")->implode(''),
+            'content' => collect($this->faker->paragraphs(rand(8, 20)))->map(function ($p, $index) {
+                if ($index > 0 && $index % 4 === 0) {
+                    return "<h2>" . Str::title($this->faker->words(rand(3, 6), true)) . "</h2><p>{$p}</p>";
+                }
+                return "<p>{$p}</p>";
+            })->implode(''),
+            'photo' => 'https://picsum.photos/seed/' . Str::uuid() . '/1920/1080',
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
             'is_published' => $this->faker->boolean(80),

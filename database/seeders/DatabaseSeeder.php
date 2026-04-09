@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\Role;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -19,7 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $users = User::factory(10)->create();
 
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
@@ -36,6 +37,8 @@ class DatabaseSeeder extends Seeder
             'Lifestyle' => 'lifestyle',
             'Programming' => 'programming',
             'Design' => 'design',
+            'Travel' => 'travel',
+            'Food' => 'food',
         ];
 
         foreach ($categories as $name => $slug) {
@@ -48,16 +51,23 @@ class DatabaseSeeder extends Seeder
             'Filament' => 'filament',
             'Web Development' => 'web-development',
             'Productivity' => 'productivity',
+            'JavaScript' => 'javascript',
+            'CSS' => 'css',
         ];
 
         foreach ($tags as $name => $slug) {
             Tag::firstOrCreate(['slug' => $slug], ['name' => $name]);
         }
 
-        Post::factory(25)->create()->each(function ($post) {
+        Post::factory(25)->create()->each(function ($post) use ($users) {
             $post->tags()->attach(
                 Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')
             );
+
+            Comment::factory(rand(0, 10))->create([
+                'post_id' => $post->id,
+                'user_id' => fn () => $users->random()->id,
+            ]);
         });
     }
 }
