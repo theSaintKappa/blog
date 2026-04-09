@@ -1,3 +1,5 @@
+<?php
+$html = <<<'HTML'
 <!DOCTYPE html>
 <html lang="pl" class="h-full antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
 <head>
@@ -15,27 +17,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script>
-        function updateTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
-        updateTheme();
-        document.addEventListener('livewire:navigated', updateTheme);
     </script>
 </head>
 <body x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) 
       }" 
-      x-init="
-          $watch('darkMode', val => {
-              localStorage.setItem('theme', val ? 'dark' : 'light');
-              val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark');
-          })
-      "
-      class="font-sans text-zinc-900 dark:text-zinc-50 antialiased h-full bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+      x-init="$watch('darkMode', val => {
+          localStorage.setItem('theme', val ? 'dark' : 'light');
+          val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark');
+      })" class="font-sans text-zinc-900 dark:text-zinc-50 antialiased h-full bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
     
     @include('partials.navigation')
 
@@ -53,3 +48,6 @@
     </div>
 </body>
 </html>
+HTML;
+file_put_contents('resources/views/layouts/guest.blade.php', $html);
+echo "Updated guest layout\n";

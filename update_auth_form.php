@@ -1,63 +1,9 @@
 <?php
+$content = file_get_contents('resources/views/components/⚡auth-form.blade.php');
+$parts = explode('?>', $content, 2);
+$phpPart = $parts[0] . "?>";
 
-use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-
-new class extends Component
-{
-    public bool $isRegistering = false;
-
-    public string $name = '';
-    public string $email = '';
-    public string $password = '';
-    public string $password_confirmation = '';
-
-    public function toggleMode()
-    {
-        $this->isRegistering = !$this->isRegistering;
-        $this->resetValidation();
-        $this->password = '';
-        $this->password_confirmation = '';
-    }
-
-    public function submit()
-    {
-        if ($this->isRegistering) {
-            $this->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ]);
-
-            $user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'password' => Hash::make($this->password),
-            ]);
-
-            event(new Registered($user));
-            Auth::login($user);
-            return redirect()->intended(route('posts.index', absolute: false));
-        } else {
-            $this->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ]);
-
-            if (Auth::attempt(['email' => $this->email, 'password' => $this->password], true)) {
-                session()->regenerate();
-                return redirect()->intended(route('posts.index', absolute: false));
-            }
-
-            $this->addError('email', trans('auth.failed'));
-        }
-    }
-};
-?>
+$htmlPart = <<<'HTML'
 
 <div class="max-w-md mx-auto relative p-8 md:p-10">
     <div class="absolute inset-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl -z-10"></div>
@@ -123,3 +69,7 @@ new class extends Component
         </div>
     </form>
 </div>
+HTML;
+
+file_put_contents('resources/views/components/⚡auth-form.blade.php', $phpPart . "\n" . $htmlPart);
+echo "Updated auth form\n";

@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', function () {
-        return view('auth.auth');
+        return view('auth.auth', ['isRegistering' => request()->routeIs('register')]);
     })
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', function () {
-        return view('auth.auth');
+        return view('auth.auth', ['isRegistering' => request()->routeIs('register')]);
     })
         ->name('login');
 

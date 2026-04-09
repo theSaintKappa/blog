@@ -1,8 +1,10 @@
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center">
-                <p class="text-gray-400">© 2026 ZSTiO. Projekt edukacyjny - Podstawy Laravel</p>
-            </div>
+<footer class="mt-20 py-12 border-t border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
+    <div class="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p class="mb-4 md:mb-0">&copy; {{ date('Y') }} Twój Blog. Wszelkie prawa zastrzeżone.</p>
+        <div class="flex space-x-6">
+            <a href="#" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">O nas</a>
+            <a href="#" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">Polityka Prywatności</a>
+            <a href="#" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">Kontakt</a>
         </div>
-    </footer>
+    </div>
+</footer>

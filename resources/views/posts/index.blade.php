@@ -1,12 +1,14 @@
-<x-layout>
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">Najnowsze Posty</h2>
-            <p class="mt-2 text-gray-600">Odkryj najnowsze artykuły z świata programowania</p>
-        </div>
+<x-layout title="Najnowsze Wpisy | Twój Blog">
+    <!-- Header -->
+    <header class="my-8 md:my-16 space-y-2 md:space-y-4">
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Najnowsze Artykuły
+        </h1>
+        <p class="text-base md:text-lg text-zinc-600 dark:text-zinc-400">
+            Przeglądaj najnowsze wpisy, porady i artykuły ze świata technologii.<br/>
+            Bądź na bieżąco z tym co ważne.
+        </p>
+    </header>
 
-        <livewire:post-list />
-    </main>
+    <livewire:post-list />
 </x-layout>

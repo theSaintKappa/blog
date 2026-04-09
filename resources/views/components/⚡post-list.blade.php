@@ -105,38 +105,46 @@ new class extends Component
 };
 ?>
 
-<div>
+<div class="relative">
     <!-- Filters/Search Bar -->
-    <div class="mb-6 flex flex-col sm:flex-row gap-4 relative" x-data="{ openFilters: false }">
-        <div class="flex-1 flex gap-2">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Szukaj postów..."
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+    <div class="mb-10 flex flex-col md:flex-row gap-4 relative" x-data="{ openFilters: false }">
+        <!-- Search -->
+        <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Szukaj wpisów..."
+                class="w-full pl-11 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-xl focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 focus:border-transparent outline-none transition-all placeholder:text-zinc-500">
         </div>
         
+        <!-- Filters Toggle -->
         <div class="relative">
-            <button @click="openFilters = !openFilters" type="button" class="w-full sm:w-auto inline-flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                Filtry zaawansowane
-                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            <button @click="openFilters = !openFilters" type="button" class="w-full md:w-auto h-full px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl flex items-center justify-between gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors focus:outline-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
+                Filtry
             </button>
             
+            <!-- Filters Dropdown -->
             <div x-show="openFilters" 
+                x-cloak
                 @click.away="openFilters = false"
-                x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute right-0 z-50 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-                style="display: none;">
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 translate-y-1"
+                class="absolute right-0 z-50 mt-2 w-full md:w-80 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl p-5">
                 
-                <div class="p-4 space-y-4">
+                <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kategoria</label>
-                        <select wire:model.live="category" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="">Wszystkie kategorie</option>
+                        <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Kategoria</label>
+                        <select wire:model.live="category" class="w-full p-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-zinc-900 outline-none">
+                            <option value="">Wszystkie</option>
                             @foreach ($categories as $cat)
                                 <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
                             @endforeach
@@ -144,8 +152,8 @@ new class extends Component
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tagi</label>
-                        <select wire:model.live="tag" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Tagi</label>
+                        <select wire:model.live="tag" class="w-full p-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-zinc-900 outline-none">
                             <option value="">Wszystkie tagi</option>
                             @foreach ($tags as $t)
                                 <option value="{{ $t->slug }}">{{ $t->name }}</option>
@@ -154,8 +162,8 @@ new class extends Component
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Autor</label>
-                        <select wire:model.live="author" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Autor</label>
+                        <select wire:model.live="author" class="w-full p-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-zinc-900 outline-none">
                             <option value="">Wszyscy autorzy</option>
                             @foreach ($authors as $usr)
                                 <option value="{{ $usr->id }}">{{ $usr->name }}</option>
@@ -164,16 +172,16 @@ new class extends Component
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Sortowanie</label>
-                        <select wire:model.live="sort" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Sortowanie</label>
+                        <select wire:model.live="sort" class="w-full p-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-zinc-900 outline-none">
                             <option value="newest">Najnowsze</option>
                             <option value="oldest">Najstarsze</option>
                         </select>
                     </div>
 
-                    <div class="pt-4 mt-4 border-t border-gray-200">
-                        <button wire:click="clearFilters" @click="openFilters = false" type="button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            Wyczyść filtry
+                    <div class="pt-2">
+                        <button wire:click="clearFilters" @click="openFilters = false" type="button" class="w-full py-2.5 bg-zinc-900 dark:bg-zinc-50 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg text-sm font-semibold transition-colors">
+                            Wyczyść widok
                         </button>
                     </div>
                 </div>
@@ -182,59 +190,68 @@ new class extends Component
     </div>
 
     <!-- Posts Grid -->
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 relative">
-        <div wire:loading class="absolute inset-0 z-10 bg-white/50 backdrop-blur-sm rounded-lg flex justify-center items-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    <div class="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 relative">
+        <div wire:loading class="absolute inset-0 z-10 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-[2px] rounded-2xl flex justify-center mt-20">
+            <span class="text-sm font-medium text-zinc-500">Odświeżanie...</span>
         </div>
 
         @forelse ($posts as $post)
-            <article class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden" wire:key="post-{{ $post->id }}">
-                <div class="h-48 flex items-center justify-center overflow-hidden">
+            <article class="group flex flex-col h-full relative" wire:key="post-{{ $post->id }}">
+                <a href="{{ route('posts.show', $post->slug) }}" wire:navigate class="block relative aspect-[3/2] w-full bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden mb-6">
                     @if($post->photo)
-                        <img src="{{ $post->photo }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                        <img src="{{ $post->photo }}" alt="{{ $post->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform ease-out group-hover:scale-110">
                     @else
-                        <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                            <span class="text-6xl">📝</span>
+                        <div class="absolute inset-0 w-full h-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center transition-transform ease-out group-hover:scale-110">
+                            <span class="text-4xl grayscale opacity-50">📰</span>
                         </div>
                     @endif
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        @if ($post->is_published)
-                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-                                Opublikowany
-                            </span>
-                        @else
-                            <span class="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
-                                Szkic
-                            </span>
+                    <div class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-2xl pointer-events-none"></div>
+                </a>
+
+                <div class="flex flex-col flex-grow">
+                    <div class="flex items-center gap-x-3 text-xs mb-3">
+                        <time datetime="{{ $post->created_at->format('Y-m-d') }}" class="text-zinc-500 dark:text-zinc-400">
+                            {{ $post->created_at->isoFormat('D MMM YYYY') }}
+                        </time>
+                        @if($post->category)
+                            <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
+                            <span class="font-medium text-zinc-900 dark:text-zinc-300">{{ $post->category->name }}</span>
                         @endif
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2 hover:text-indigo-600 cursor-pointer">
-                        <a href="{{ route('posts.show', $post->slug) }}" wire:navigate>{{ $post->title }}</a>
+                    
+                    <h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <a href="{{ route('posts.show', $post->slug) }}" wire:navigate class="focus:outline-none">
+                            <span class="absolute inset-0 z-10" aria-hidden="true"></span>
+                            {{ $post->title }}
+                        </a>
                     </h3>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {{ $post->lead ?? Str::limit(strip_tags($post->content), 150) }}
+                    
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3 mb-6">
+                        {{ $post->lead ?? Str::limit(strip_tags($post->content), 120) }}
                     </p>
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm font-semibold">
-                                {{ strtoupper(substr($post->user?->name ?? 'Anon', 0, 2)) }}
-                            </div>
-                            <span class="text-sm text-gray-700 font-medium">{{ $post->user?->name ?? 'Anonymous' }}</span>
+                    
+                    <div class="mt-auto flex items-center gap-x-3">
+                        <div class="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                            {{ strtoupper(substr($post->user?->name ?? 'A', 0, 1)) }}
                         </div>
-                        <span class="text-sm text-gray-500">{{ $post->created_at->diffForHumans() }}</span>
+                        <div class="text-sm">
+                            <p class="font-semibold text-zinc-900 dark:text-zinc-50">
+                                {{ $post->user?->name ?? 'Anonim' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </article>
         @empty
-            <div class="col-span-full text-center py-12">
-                <p class="text-gray-500 text-lg">Brak postów do wyświetlenia.</p>
+            <div class="col-span-full py-20 text-center">
+                <span class="text-4xl mb-4 block">🔍</span>
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-2">Nic nie znaleziono</h3>
+                <p class="text-zinc-500 dark:text-zinc-400">Spróbuj zmienić parametry wyszukiwania.</p>
             </div>
         @endforelse
     </div>
 
-    <div class="mt-8">
+    <div class="mt-16">
         {{ $posts->links() }}
     </div>
 </div>
