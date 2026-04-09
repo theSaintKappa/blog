@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HelloController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -14,6 +15,10 @@ Route::get('/hello-world/{name}', [HelloController::class, 'index']);
 // Posts
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

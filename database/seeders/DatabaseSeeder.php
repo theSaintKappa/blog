@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -36,7 +39,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($categories as $name => $slug) {
-            \App\Models\Category::firstOrCreate(['slug' => $slug], ['name' => $name]);
+            Category::firstOrCreate(['slug' => $slug], ['name' => $name]);
         }
 
         $tags = [
@@ -48,12 +51,12 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($tags as $name => $slug) {
-            \App\Models\Tag::firstOrCreate(['slug' => $slug], ['name' => $name]);
+            Tag::firstOrCreate(['slug' => $slug], ['name' => $name]);
         }
 
-        \App\Models\Post::factory(25)->create()->each(function ($post) {
+        Post::factory(25)->create()->each(function ($post) {
             $post->tags()->attach(
-                \App\Models\Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')
+                Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')
             );
         });
     }

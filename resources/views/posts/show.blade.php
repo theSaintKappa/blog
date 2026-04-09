@@ -56,27 +56,19 @@
                 </div>
 
                 <!-- Tags -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <p class="text-sm text-gray-600 mb-3">Tagi:</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span
-                            class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 cursor-pointer">
-                            #laravel
-                        </span>
-                        <span
-                            class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 cursor-pointer">
-                            #php
-                        </span>
-                        <span
-                            class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 cursor-pointer">
-                            #docker
-                        </span>
-                        <span
-                            class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 cursor-pointer">
-                            #tutorial
-                        </span>
+                @if ($post->tags->isNotEmpty())
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <p class="text-sm text-gray-600 mb-3">Tagi:</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($post->tags as $tag)
+                                <span
+                                    class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 cursor-pointer">
+                                    #{{ $tag->name }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Social Share -->
                 <div class="mt-6 flex items-center gap-4">
@@ -100,207 +92,116 @@
         <!-- Comments Section -->
         <section class="bg-white rounded-lg shadow-md p-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">
-                Komentarze (3)
+                Komentarze ({{ $post->comments->whereNull('parent_id')->reduce(fn($sum, $c) => $sum + 1 + $c->replies->count(), 0) }})
             </h2>
 
+            @auth
             <!-- Comment Form -->
             <div class="mb-8 pb-8 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Dodaj komentarz</h3>
-                <form class="space-y-4">
-                    <!-- Name -->
-                    <div>
-                        <label for="author" class="block text-sm font-medium text-gray-700 mb-2">
-                            Twoje imię *
-                        </label>
-                        <input type="text" id="author" name="author" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            placeholder="Jan Kowalski">
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email *
-                        </label>
-                        <input type="email" id="email" name="email" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            placeholder="jan@example.com">
-                        <p class="mt-1 text-sm text-gray-500">Email nie będzie publikowany</p>
-                    </div>
-
-                    <!-- Comment Content -->
+                <form action="{{ route('posts.comments.store', $post) }}" method="POST" class="space-y-4">
+                    @csrf
                     <div>
                         <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
                             Komentarz *
                         </label>
-                        <textarea id="content" name="content" required rows="5"
+                        <textarea id="content" name="content" required rows="4"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                             placeholder="Podziel się swoimi przemyśleniami..."></textarea>
+                        @error('content')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="flex items-center gap-4">
+                    <div>
                         <button type="submit"
                             class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
                             Opublikuj komentarz
                         </button>
-                        <p class="text-sm text-gray-500">* Pola wymagane</p>
                     </div>
                 </form>
             </div>
+            @else
+            <div class="mb-8 pb-8 border-b border-gray-200 text-gray-700">
+                <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">Zaloguj się</a>, aby dodać komentarz.
+            </div>
+            @endauth
 
             <!-- Comments List -->
             <div class="space-y-6">
-
-                <!-- Comment 1 -->
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            AN
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-gray-900">Anna Nowak</h4>
-                                <span class="text-sm text-gray-500">2 godziny temu</span>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed">
-                                Świetny artykuł! Właśnie zaczynałam przygodę z Laravel i ten tutorial bardzo mi pomógł.
-                                Sail to genialne rozwiązanie - wszystko działa od razu bez konfiguracji 🚀
-                            </p>
-                            <div class="mt-3 flex items-center gap-4">
-                                <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                    Odpowiedz
-                                </button>
-                                <button class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                    </svg>
-                                    <span>12</span>
-                                </button>
+                @foreach ($post->comments as $comment)
+                    <!-- Top-level Comment -->
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                {{ strtoupper(substr($comment->user->name, 0, 2)) }}
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Comment 2 -->
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            MK
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-gray-900">Marek Kowalczyk</h4>
-                                <span class="text-sm text-gray-500">5 godzin temu</span>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed">
-                                Czy Laravel 11 ma jakieś breaking changes w porównaniu do wersji 10? Planujemy migrację
-                                projektu i zastanawiam się, ile pracy nas czeka.
-                            </p>
-                            <div class="mt-3 flex items-center gap-4">
-                                <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                    Odpowiedz
-                                </button>
-                                <button class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                    </svg>
-                                    <span>5</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Nested Reply -->
-                        <div class="ml-8 mt-4 flex gap-4">
-                            <div class="flex-shrink-0">
-                                <div
-                                    class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                    JK
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-semibold text-gray-900">{{ $comment->user->name }}</h4>
+                                        <span class="px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full">{{ $comment->user->role->value ?? 'User' }}</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500" title="{{ $comment->created_at }}">{{ $comment->created_at->diffForHumans() }}</span>
                                 </div>
+                                <p class="text-gray-700 leading-relaxed">{{ $comment->content }}</p>
+                                
+                                @auth
+                                <div class="mt-3">
+                                    <button onclick="document.getElementById('reply-form-{{ $comment->id }}').style.display = document.getElementById('reply-form-{{ $comment->id }}').style.display === 'none' ? 'block' : 'none'" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                        Odpowiedz
+                                    </button>
+                                    
+                                    <div id="reply-form-{{ $comment->id }}" class="mt-4" style="display: none;">
+                                        <form action="{{ route('posts.comments.store', $post) }}" method="POST" class="space-y-3">
+                                            @csrf
+                                            <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                                            <textarea name="content" required rows="2"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                                                placeholder="Napisz odpowiedź..."></textarea>
+                                            <div class="flex gap-2">
+                                                <button type="submit" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">Odpowiedz</button>
+                                                <button type="button" onclick="document.getElementById('reply-form-{{ $comment->id }}').style.display = 'none'" class="bg-gray-200 text-gray-800 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-300">Anuluj</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endauth
                             </div>
-                            <div class="flex-1">
-                                <div class="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div class="flex items-center gap-2">
-                                            <h4 class="font-semibold text-gray-900">Jan Kowalski</h4>
-                                            <span
-                                                class="px-2 py-0.5 bg-indigo-600 text-white text-xs rounded-full">Autor</span>
+
+                            <!-- Replies -->
+                            @if ($comment->replies->count() > 0)
+                                <div class="mt-4 space-y-4">
+                                    @foreach ($comment->replies as $reply)
+                                        <div class="ml-8 flex gap-4">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    {{ strtoupper(substr($reply->user->name, 0, 2)) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <div class="flex items-center gap-2">
+                                                            <h4 class="font-semibold text-gray-900">{{ $reply->user->name }}</h4>
+                                                            <span class="px-2 py-0.5 bg-indigo-600 text-white text-xs rounded-full">{{ $reply->user->role->value ?? 'User' }}</span>
+                                                        </div>
+                                                        <span class="text-sm text-gray-500" title="{{ $reply->created_at }}">{{ $reply->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    <p class="text-gray-700 leading-relaxed">{{ $reply->content }}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span class="text-sm text-gray-500">3 godziny temu</span>
-                                    </div>
-                                    <p class="text-gray-700 leading-relaxed">
-                                        @Marek - Breaking changes są minimalne! Głównie dotyczą struktury katalogów i
-                                        konfiguracji. Polecam sprawdzić oficjalny upgrade guide na laravel.com
-                                    </p>
-                                    <div class="mt-3 flex items-center gap-4">
-                                        <button
-                                            class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                            </svg>
-                                            <span>8</span>
-                                        </button>
-                                    </div>
+                                    @endforeach
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
-                </div>
-
-                <!-- Comment 3 -->
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            KW
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-gray-900">Kasia Wiśniewska</h4>
-                                <span class="text-sm text-gray-500">1 dzień temu</span>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed">
-                                Czy ktoś używał Sail w produkcji? Czy to tylko narzędzie developerskie, czy można na nim
-                                oprzeć deployment?
-                            </p>
-                            <div class="mt-3 flex items-center gap-4">
-                                <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                    Odpowiedz
-                                </button>
-                                <button class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                    </svg>
-                                    <span>3</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Load More Comments -->
-            <div class="mt-8 text-center">
-                <button class="text-indigo-600 hover:text-indigo-700 font-medium text-sm">
-                    Załaduj więcej komentarzy
-                </button>
+                @endforeach
             </div>
         </section>
-
         <!-- Related Posts -->
         <section class="mt-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Powiązane artykuły</h2>

@@ -14,7 +14,12 @@ class PostController extends Controller
 
     public function show(string $slug)
     {
-        $post = Post::where('slug', $slug)->where('is_published', true)->firstOrFail();
+        $post = Post::where('slug', $slug)
+            ->where('is_published', true)
+            ->with(['tags', 'comments' => function ($query) {
+                $query->whereNull('parent_id')->with(['user', 'replies.user'])->latest();
+            }])
+            ->firstOrFail();
 
         return view('posts.show', [
             'post' => $post,
