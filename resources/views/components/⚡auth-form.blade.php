@@ -1,24 +1,30 @@
 <?php
 
-use Livewire\Component;
+use App\Enums\Role;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use Livewire\Component;
 
 new class extends Component
 {
     public bool $isRegistering = false;
 
     public string $name = '';
+
+    public string $username = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
 
     public function toggleMode()
     {
-        $this->isRegistering = !$this->isRegistering;
+        $this->isRegistering = ! $this->isRegistering;
         $this->resetValidation();
         $this->password = '';
         $this->password_confirmation = '';
@@ -29,18 +35,22 @@ new class extends Component
         if ($this->isRegistering) {
             $this->validate([
                 'name' => ['required', 'string', 'max:255'],
+                'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
 
             $user = User::create([
                 'name' => $this->name,
+                'username' => $this->username,
+                'role' => Role::User,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
             ]);
 
             event(new Registered($user));
             Auth::login($user);
+
             return redirect()->intended(route('posts.index', absolute: false));
         } else {
             $this->validate([
@@ -50,6 +60,7 @@ new class extends Component
 
             if (Auth::attempt(['email' => $this->email, 'password' => $this->password], true)) {
                 session()->regenerate();
+
                 return redirect()->intended(route('posts.index', absolute: false));
             }
 
@@ -72,6 +83,12 @@ new class extends Component
                 <label for="name" class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Imię</label>
                 <input wire:model="name" id="name" type="text" class="w-full px-5 py-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-2xl focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 outline-none transition-all placeholder:text-zinc-400" />
                 @error('name') <span class="text-red-500 text-sm mt-2 font-medium block">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label for="username" class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Nazwa użytkownika</label>
+                <input wire:model="username" id="username" type="text" class="w-full px-5 py-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-2xl focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 outline-none transition-all placeholder:text-zinc-400" />
+                @error('username') <span class="text-red-500 text-sm mt-2 font-medium block">{{ $message }}</span> @enderror
             </div>
         @endif
 
